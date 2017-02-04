@@ -22,7 +22,7 @@ if [ ! -d "$CIFAR_100_DIR" ]; then
   wget https://www.cs.toronto.edu/~kriz/cifar-100-python.tar.gz
   tar -xvf cifar-100-python.tar.gz
   mv cifar-100-python ${CIFAR_100_DIR}
-  mv cifar-100-python.tar.gz resources/
+  rm cifar-100-python.tar.gz
 fi
 
 # Download the CIFAR 10 dataset
