@@ -1,6 +1,7 @@
 resources/cifar-10-python/
 resources/cifar-100-python/
 resources/dataset.npz
+resources/vgg16.tflearn
 output/
 logs/
 .idea
