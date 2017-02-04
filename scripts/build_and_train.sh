@@ -22,7 +22,16 @@ if [ ! -d "$CIFAR_100_DIR" ]; then
   wget https://www.cs.toronto.edu/~kriz/cifar-100-python.tar.gz
   tar -xvf cifar-100-python.tar.gz
   mv cifar-100-python ${CIFAR_100_DIR}
-  rm cifar-100-python.tar.gz
+  mv cifar-100-python.tar.gz resources/
+fi
+
+# Download the CIFAR 10 dataset
+if [ ! -d "$CIFAR_10_DIR" ]; then
+  echo 'Downloading the CIFAR 10 dataset'
+  wget https://www.cs.toronto.edu/~kriz/cifar-10-python.tar.gz
+  tar -xvf cifar-10-python.tar.gz
+  mv cifar-10-batches-py ${CIFAR_10_DIR}
+  rm cifar-10-python.tar.gz ${CIFAR_10_DIR}
 fi
 
 python build_dataset.py \
