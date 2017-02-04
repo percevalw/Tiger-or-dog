@@ -1,0 +1,9 @@
+labels:
+  - tiger
+  - dog
+  - none
+pretrained_model:
+  mean:
+    123.68
+    116.779
+    103.939

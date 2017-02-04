@@ -1,0 +1,7 @@
+resources/cifar-10-python/
+resources/cifar-100-python/
+resources/dataset.npz
+output/
+logs/
+.idea
+__pycache__/
