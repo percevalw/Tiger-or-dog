@@ -31,7 +31,7 @@ if [ ! -d "$CIFAR_10_DIR" ]; then
   wget https://www.cs.toronto.edu/~kriz/cifar-10-python.tar.gz
   tar -xvf cifar-10-python.tar.gz
   mv cifar-10-batches-py ${CIFAR_10_DIR}
-  rm cifar-10-python.tar.gz ${CIFAR_10_DIR}
+  mv cifar-10-python.tar.gz ${CIFAR_10_DIR}
 fi
 
 python build_dataset.py \
