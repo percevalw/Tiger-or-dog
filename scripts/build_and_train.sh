@@ -1,4 +1,9 @@
 #!/bin/bash
+
+# stop on error
+set -e
+############################################
+
 CIFAR_100_DIR='resources/cifar-100-python'
 CIFAR_10_DIR='resources/cifar-10-python'
 META_FILENAME='resources/meta.yaml'

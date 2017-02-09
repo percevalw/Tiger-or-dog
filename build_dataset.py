@@ -4,9 +4,10 @@ from __future__ import print_function
 
 import argparse
 import os
+import sys
 
 from tflearn.datasets import cifar10
-from tflearn.data_utils import shuffle
+from tflearn.data_utils import shuffle, to_categorical
 import numpy as np
 import pickle
 import logging
@@ -56,19 +57,61 @@ def filter_dataset_keep_others(x, y, old_label, new_label, other_label):
     return (new_x, new_y), (new_x_others, new_others_y)
 
 
+def load_cifar_10_batch(fpath):
+    with open(fpath, 'rb') as f:
+        if sys.version_info > (3, 0):
+            # Python3
+            d = pickle.load(f, encoding='latin1')
+        else:
+            # Python2
+            d = pickle.load(f)
+    data = d["data"]
+    labels = d["labels"]
+    return data, labels
+
+
+def load_cifar_10(dirname):
+    X_train = []
+    Y_train = []
+
+    for i in range(1, 6):
+        fpath = os.path.join(dirname, 'data_batch_' + str(i))
+        data, labels = load_cifar_10_batch(fpath)
+        if i == 1:
+            X_train = data
+            Y_train = labels
+        else:
+            X_train = np.concatenate([X_train, data], axis=0)
+            Y_train = np.concatenate([Y_train, labels], axis=0)
+
+    fpath = os.path.join(dirname, 'test_batch')
+    X_test, Y_test = load_cifar_10_batch(fpath)
+
+    X_train = np.dstack((X_train[:, :1024], X_train[:, 1024:2048],
+                         X_train[:, 2048:])) / 255.
+    X_train = np.reshape(X_train, [-1, 32, 32, 3])
+    X_test = np.dstack((X_test[:, :1024], X_test[:, 1024:2048],
+                        X_test[:, 2048:])) / 255.
+    X_test = np.reshape(X_test, [-1, 32, 32, 3])
+
+    return (X_train, np.array(Y_train)), (X_test, np.array(Y_test))
+
+
+def load_cifar_100(dirname):
+    meta = unpickle(os.path.join(dirname, 'meta'))
+
+    train = unpickle(os.path.join(dirname, 'train'))
+
+    test = unpickle(os.path.join(dirname, 'test'))
+
+    return (train['data'], np.array(train['fine_labels'])), (test['data'], np.array(test['fine_labels'])), meta
+
+
 def load_datasets(cifar100_directory, cifar10_directory):
-    with BL("loading cifar 100 dataset"):
-        (X_10, Y_10), (X_10_test, Y_10_test_list) = cifar10.load_data(cifar10_directory)
-        Y_10_test = np.array(Y_10_test_list)
+    with BL("loading cifar 100 and cifar 10 dataset"):
+        (X_10, Y_10), (X_10_test, Y_10_test) = load_cifar_10(cifar10_directory)
 
-        meta = unpickle(os.path.join(cifar100_directory, 'meta'))
-
-        train = unpickle(os.path.join(cifar100_directory, 'train'))
-
-        test = unpickle(os.path.join(cifar100_directory, 'test'))
-
-        (X_100_flat, Y_100), (X_100_test_flat, Y_100_test) = (train['data'], np.array(train['fine_labels'])), (
-            test['data'], np.array(test['fine_labels']))
+        (X_100_flat, Y_100), (X_100_test_flat, Y_100_test), meta = load_cifar_10(cifar100_directory)
 
     tiger_label = meta['fine_label_names'].index('tiger')
     dog_label = 5
